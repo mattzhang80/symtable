@@ -149,7 +149,7 @@ void SymTable_map(SymTable_T oSymTable,
 
         struct Binding *curr = oSymTable -> head;
         while(curr != NULL) {
-            (*pfApply)(curr -> uKey, curr -> uValue, pvExtra);
+            (*pfApply)(curr -> uKey, curr -> uValue, (void*) pvExtra);
             curr = curr -> next;
         }
     };
