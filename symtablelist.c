@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include "symtable.h"
 #include "assert.h"
 
@@ -47,11 +48,11 @@ int SymTable_put(SymTable_T oSymTable,
         assert(oSymTable != NULL);
         assert(pcKey != NULL);
 
-        if(oSymTable_contains(oSymTable, pcKey)) {
+        if(SymTable_contains(oSymTable, pcKey)) {
             return 0;
         }
 
-        struct Binding *newB = (struct Binging *)malloc(sizeof(struct 
+        struct Binding *newB = (struct Binding *)malloc(sizeof(struct 
         Binding));
         assert(newB != NULL);
 
