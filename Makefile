@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -std=c90 -g
+CFLAGS = -Wall -Wextra -ansi -pedantic -g
 
 all: testsymtablelist testsymtablehash
 
@@ -9,7 +9,7 @@ testsymtablelist: testsymtable.o symtablelist.o
 testsymtablehash: testsymtable.o symtablehash.o
 	$(CC) $(CFLAGS) -o testsymtablehash testsymtable.o symtablehash.o
 
-testsymtable.o: testsymtable.c symtable.h 
+testsymtable.o: testsymtable.c symtable.h
 	$(CC) $(CFLAGS) -c testsymtable.c
 
 symtablelist.o: symtablelist.c symtable.h
@@ -18,5 +18,5 @@ symtablelist.o: symtablelist.c symtable.h
 symtablehash.o: symtablehash.c symtable.h
 	$(CC) $(CFLAGS) -c symtablehash.c
 
-clean: 
+clean:
 	rm -f *.o testsymtablelist testsymtablehash
