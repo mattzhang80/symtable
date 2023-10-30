@@ -16,7 +16,8 @@ struct SymTable {
     Binding_T *buckets;
 };
 
-static const size_t bucketCounts[] = {509, 1021, 2039, 4093, 8191, 16381, 32749, 65521};
+static const size_t bucketCounts[] = {509, 1021, 2039, 4093, 8191, 
+16381, 32749, 65521};
 
 /* Return a hash code for pcKey that is between 0 and uBucketCount-1,
    inclusive. */
@@ -66,7 +67,8 @@ size_t SymTable_getLength(SymTable_T oSymTable) {
     return oSymTable->length;
 };
 
-int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
+int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void 
+*pvValue) {
     assert(oSymTable != NULL);
     assert(pcKey != NULL);
 
@@ -74,7 +76,8 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
         return 0;
     }
 
-    size_t index = SymTable_hash(pcKey, bucketCounts[oSymTable->bucket_ct_i]);
+    size_t index = SymTable_hash(pcKey, bucketCounts[oSymTable->
+    bucket_ct_i]);
     Binding_T newBinding = malloc(sizeof(struct Binding));
     assert(newBinding != NULL);
 
@@ -87,11 +90,13 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
     return 1;
 }
 
-void *SymTable_replace(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
+void *SymTable_replace(SymTable_T oSymTable, const char *pcKey, const 
+void *pvValue) {
     assert(oSymTable != NULL);
     assert(pcKey != NULL);
 
-    size_t index = SymTable_hash(pcKey, bucketCounts[oSymTable->bucket_ct_i]);
+    size_t index = SymTable_hash(pcKey, bucketCounts[oSymTable->
+    bucket_ct_i]);
     Binding_T current = oSymTable->buckets[index];
     while (current != NULL) {
         if (strcmp(current->uKey, pcKey) == 0) {
@@ -108,7 +113,8 @@ int SymTable_contains(SymTable_T oSymTable, const char *pcKey) {
     assert(oSymTable != NULL);
     assert(pcKey != NULL);
 
-    size_t index = SymTable_hash(pcKey, bucketCounts[oSymTable->bucket_ct_i]);
+    size_t index = SymTable_hash(pcKey, bucketCounts[oSymTable->
+    bucket_ct_i]);
     Binding_T current = oSymTable->buckets[index];
 
     while (current) {
@@ -124,7 +130,8 @@ void *SymTable_get(SymTable_T oSymTable, const char *pcKey) {
     assert(oSymTable != NULL);
     assert(pcKey != NULL);
 
-    size_t index = SymTable_hash(pcKey, bucketCounts[oSymTable->bucket_ct_i]);
+    size_t index = SymTable_hash(pcKey, bucketCounts[oSymTable->
+    bucket_ct_i]);
     Binding_T current = oSymTable->buckets[index];
     while (current != NULL) {
         if (strcmp(current->uKey, pcKey) == 0) {
@@ -139,7 +146,8 @@ void *SymTable_remove(SymTable_T oSymTable, const char *pcKey) {
     assert(oSymTable != NULL);
     assert(pcKey != NULL);
 
-    size_t index = SymTable_hash(pcKey, bucketCounts[oSymTable->bucket_ct_i]);
+    size_t index = SymTable_hash(pcKey, bucketCounts[oSymTable->
+    bucket_ct_i]);
     Binding_T current = oSymTable->buckets[index];
     Binding_T previous = NULL;
 
@@ -162,7 +170,8 @@ void *SymTable_remove(SymTable_T oSymTable, const char *pcKey) {
     return NULL;
 }
 
-void SymTable_map(SymTable_T oSymTable, void (*pfApply)(const char *pcKey, void *pvValue, void *pvExtra), const void *pvExtra) {
+void SymTable_map(SymTable_T oSymTable, void (*pfApply)(const char 
+*pcKey, void *pvValue, void *pvExtra), const void *pvExtra) {
     assert(oSymTable != NULL);
     assert(pfApply != NULL);
 
