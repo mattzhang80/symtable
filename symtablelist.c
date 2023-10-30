@@ -1,7 +1,8 @@
+#include "symtable.h"
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
-#include "symtable.h"
-#include "assert.h"
+
 
 /*Binding is a node of the linked list that is the SymTable. It contains 
 a keymand a value, and a pointer to the next node in the list.*/
