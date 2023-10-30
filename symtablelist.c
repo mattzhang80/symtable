@@ -22,7 +22,7 @@ struct SymTable {
 SymTable_T SymTable_new(void) {
     SymTable_T oSymTable = malloc(sizeof(struct SymTable));
     if (!oSymTable) {
-        return NULL;  // Handle memory allocation failure
+        return NULL;  
     }
     oSymTable->head = NULL;
     oSymTable->length = 0;
@@ -30,9 +30,9 @@ SymTable_T SymTable_new(void) {
 }
 
 void SymTable_free(SymTable_T oSymTable) {
-    if (!oSymTable) return;
     struct Binding *current = oSymTable->head;
     struct Binding *next;
+    assert(oSymTable != NULL);
 
     while (current != NULL) {
         next = current->next;
@@ -49,6 +49,11 @@ size_t SymTable_getLength(SymTable_T oSymTable) {
 }
 
 int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
+    struct Binding *newB;
+    struct Binding *curr;
+    char *keyCopy;
+    size_t keyLength;
+
     assert(oSymTable != NULL);
     assert(pcKey != NULL);
 
@@ -56,17 +61,15 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
         return 0;
     }
 
-    struct Binding *newB = malloc(sizeof(struct Binding));
-    if (!newB) {
-        return 0;  // Handle memory allocation failure
-    }
+    keyLength = strlen(pcKey) + 1;
+    keyCopy = (char *)malloc(keyLength);
+    assert(keyCopy != NULL);
+    strcpy(keyCopy, pcKey);
 
-    newB->uKey = strdup(pcKey);
-    if (!newB->uKey) {
-        free(newB);  // Free allocated memory before returning
-        return 0;    // Handle memory allocation failure
-    }
+    newB = (struct Binding *)malloc(sizeof(struct Binding));
+    assert(newB != NULL);
 
+    newB->uKey = keyCopy;
     newB->uValue = (void *)pvValue;
     newB->next = oSymTable->head;
     oSymTable->head = newB;
@@ -76,10 +79,10 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
 }
 
 void *SymTable_replace(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
+    struct Binding *curr = oSymTable->head;
+
     assert(oSymTable != NULL);
     assert(pcKey != NULL);
-
-    struct Binding *curr = oSymTable->head;
 
     while (curr != NULL) {
         if (strcmp(curr->uKey, pcKey) == 0) {
@@ -93,10 +96,9 @@ void *SymTable_replace(SymTable_T oSymTable, const char *pcKey, const void *pvVa
 }
 
 int SymTable_contains(SymTable_T oSymTable, const char *pcKey) {
+    struct Binding *curr = oSymTable->head;
     assert(oSymTable != NULL);
     assert(pcKey != NULL);
-
-    struct Binding *curr = oSymTable->head;
 
     while (curr != NULL) {
         if (strcmp(curr->uKey, pcKey) == 0) {
@@ -108,10 +110,9 @@ int SymTable_contains(SymTable_T oSymTable, const char *pcKey) {
 }
 
 void *SymTable_get(SymTable_T oSymTable, const char *pcKey) {
+    struct Binding *curr = oSymTable->head;
     assert(oSymTable != NULL);
     assert(pcKey != NULL);
-
-    struct Binding *curr = oSymTable->head;
 
     while (curr != NULL) {
         if (strcmp(curr->uKey, pcKey) == 0) {
@@ -123,11 +124,12 @@ void *SymTable_get(SymTable_T oSymTable, const char *pcKey) {
 }
 
 void *SymTable_remove(SymTable_T oSymTable, const char *pcKey) {
-    assert(oSymTable != NULL);
-    assert(pcKey != NULL);
-
     struct Binding *curr = oSymTable->head;
     struct Binding *prev = NULL;
+    void *prevValue = curr->uValue;
+
+    assert(oSymTable != NULL);
+    assert(pcKey != NULL);
 
     while (curr != NULL) {
         if (strcmp(curr->uKey, pcKey) == 0) {
@@ -136,7 +138,6 @@ void *SymTable_remove(SymTable_T oSymTable, const char *pcKey) {
             } else {
                 prev->next = curr->next;
             }
-            void *prevValue = curr->uValue;
             free(curr->uKey);
             free(curr);
             oSymTable->length--;
@@ -149,10 +150,10 @@ void *SymTable_remove(SymTable_T oSymTable, const char *pcKey) {
 }
 
 void SymTable_map(SymTable_T oSymTable, void (*pfApply)(const char *pcKey, void *pvValue, void *pvExtra), const void *pvExtra) {
+    struct Binding *curr = oSymTable->head;
     assert(oSymTable != NULL);
     assert(pfApply != NULL);
 
-    struct Binding *curr = oSymTable->head;
     while (curr != NULL) {
         pfApply(curr->uKey, curr->uValue, (void *)pvExtra);
         curr = curr->next;
