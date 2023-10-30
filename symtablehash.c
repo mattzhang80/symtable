@@ -113,7 +113,7 @@ int SymTable_contains(SymTable_T oSymTable, const char *pcKey) {
 
     while (current) {
         if (strcmp(current->uKey, pcKey) == 0) {
-            return 1; 
+            return 1;  
         }
         current = current->next;
     }
