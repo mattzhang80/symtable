@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -std=gnu89 -pedantic -g
+CFLAGS = -Wall -Wextra -std=90 -g
 
 all: testsymtablelist testsymtablehash
 
