@@ -50,12 +50,12 @@ SymTable_T SymTable_new(void) {
 }
 
 void SymTable_free(SymTable_T oSymTable) {
+    size_t i;
+    Binding_T current, next;
+
     if (oSymTable == NULL) {
         return;
     }
-
-    size_t i;
-    Binding_T current, next;
 
     for (i = 0; i < auBucketCounts[oSymTable->bucket_ct_i]; ++i) {
         current = oSymTable->buckets[i];
@@ -76,13 +76,13 @@ size_t SymTable_getLength(SymTable_T oSymTable) {
 }
 
 int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
-    if (oSymTable == NULL || pcKey == NULL) {
-        return 0;
-    }
-
     Binding_T newBinding;
     size_t index;
     char *keyCopy;
+
+    if (oSymTable == NULL || pcKey == NULL) {
+        return 0;
+    }
 
     if (SymTable_contains(oSymTable, pcKey)) {
         return 0;
@@ -109,13 +109,13 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
 }
 
 void *SymTable_replace(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
-    if (oSymTable == NULL || pcKey == NULL) {
-        return NULL;
-    }
-
     size_t index;
     Binding_T current;
     void *oldValue;
+
+    if (oSymTable == NULL || pcKey == NULL) {
+        return NULL;
+    }
 
     index = SymTable_hash(pcKey, auBucketCounts[oSymTable->bucket_ct_i]);
     current = oSymTable->buckets[index];
@@ -132,12 +132,12 @@ void *SymTable_replace(SymTable_T oSymTable, const char *pcKey, const void *pvVa
 }
 
 int SymTable_contains(SymTable_T oSymTable, const char *pcKey) {
+    size_t index;
+    Binding_T current;
+
     if (oSymTable == NULL || pcKey == NULL) {
         return 0;
     }
-
-    size_t index;
-    Binding_T current;
 
     index = SymTable_hash(pcKey, auBucketCounts[oSymTable->bucket_ct_i]);
     current = oSymTable->buckets[index];
@@ -152,12 +152,12 @@ int SymTable_contains(SymTable_T oSymTable, const char *pcKey) {
 }
 
 void *SymTable_get(SymTable_T oSymTable, const char *pcKey) {
+    size_t index;
+    Binding_T current;
+
     if (oSymTable == NULL || pcKey == NULL) {
         return NULL;
     }
-
-    size_t index;
-    Binding_T current;
 
     index = SymTable_hash(pcKey, auBucketCounts[oSymTable->bucket_ct_i]);
     current = oSymTable->buckets[index];
@@ -172,13 +172,13 @@ void *SymTable_get(SymTable_T oSymTable, const char *pcKey) {
 }
 
 void *SymTable_remove(SymTable_T oSymTable, const char *pcKey) {
-    if (oSymTable == NULL || pcKey == NULL) {
-        return NULL;
-    }
-
     size_t index;
     Binding_T current, previous;
     void *value;
+
+    if (oSymTable == NULL || pcKey == NULL) {
+        return NULL;
+    }
 
     index = SymTable_hash(pcKey, auBucketCounts[oSymTable->bucket_ct_i]);
     current = oSymTable->buckets[index];
@@ -204,12 +204,12 @@ void *SymTable_remove(SymTable_T oSymTable, const char *pcKey) {
 }
 
 void SymTable_map(SymTable_T oSymTable, void (*pfApply)(const char *pcKey, void *pvValue, void *pvExtra), const void *pvExtra) {
+    size_t i;
+    Binding_T current;
+
     if (oSymTable == NULL || pfApply == NULL) {
         return;
     }
-
-    size_t i;
-    Binding_T current;
 
     for (i = 0; i < auBucketCounts[oSymTable->bucket_ct_i]; ++i) {
         current = oSymTable->buckets[i];

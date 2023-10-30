@@ -49,19 +49,28 @@ size_t SymTable_getLength(SymTable_T oSymTable) {
 }
 
 int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
-    struct Binding *newB = malloc(sizeof(struct Binding));
-    assert(oSymTable != NULL && pcKey != NULL);
+    struct Binding *newB;
+    char *keyCopy;
+    size_t keyLength;
+
+    assert(oSymTable != NULL);
+    assert(pcKey != NULL);
 
     if (SymTable_contains(oSymTable, pcKey)) {
         return 0;
     }
 
-    char *keyCopy = strdup(pcKey);
-    if (!keyCopy) return 0;
+    keyLength = strlen(pcKey) + 1;
+    keyCopy = (char *)malloc(keyLength);
+    if (keyCopy == NULL) {
+        return 0; 
+    }
+    strcpy(keyCopy, pcKey);
 
-    if (!newB) {
-        free(keyCopy);
-        return 0;
+    newB = (struct Binding *)malloc(sizeof(struct Binding));
+    if (newB == NULL) {
+        free(keyCopy);  
+        return 0; 
     }
 
     newB->uKey = keyCopy;
@@ -121,7 +130,8 @@ void *SymTable_get(SymTable_T oSymTable, const char *pcKey) {
 void *SymTable_remove(SymTable_T oSymTable, const char *pcKey) {
     struct Binding *curr = oSymTable->head;
     struct Binding *prev = NULL;
-    
+    void *value;
+
     assert(oSymTable != NULL && pcKey != NULL);
 
     while (curr != NULL) {
@@ -131,7 +141,7 @@ void *SymTable_remove(SymTable_T oSymTable, const char *pcKey) {
             } else {
                 prev->next = curr->next;
             }
-            void *value = curr->uValue;
+            value = curr->uValue;
             free(curr->uKey);
             free(curr);
             oSymTable->length--;
