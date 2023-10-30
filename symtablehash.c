@@ -61,6 +61,11 @@ void SymTable_free(SymTable_T oSymTable) {
     free(oSymTable);
 }
 
+size_t SymTable_getLength(SymTable_T oSymTable) {
+    assert(oSymTable != NULL);
+    return oSymTable->length;
+};
+
 int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
     assert(oSymTable != NULL);
     assert(pcKey != NULL);
