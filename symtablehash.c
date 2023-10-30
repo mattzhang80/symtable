@@ -89,11 +89,11 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
 }
 
 void *SymTable_replace(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
+    size_t index = SymTable_hash(pcKey, auBucketCounts[oSymTable->bucket_ct_i]);
     Binding_T current = oSymTable->buckets[index];
     assert(oSymTable != NULL);
     assert(pcKey != NULL);
 
-    size_t index = SymTable_hash(pcKey, auBucketCounts[oSymTable->bucket_ct_i]);
     while (current != NULL) {
         if (strcmp(current->uKey, pcKey) == 0) {
             void *oldValue = current->uValue;
@@ -106,11 +106,10 @@ void *SymTable_replace(SymTable_T oSymTable, const char *pcKey, const void *pvVa
 }
 
 int SymTable_contains(SymTable_T oSymTable, const char *pcKey) {
+    size_t index = SymTable_hash(pcKey, auBucketCounts[oSymTable->bucket_ct_i]);
     Binding_T current = oSymTable->buckets[index];
     assert(oSymTable != NULL);
     assert(pcKey != NULL);
-
-    size_t index = SymTable_hash(pcKey, auBucketCounts[oSymTable->bucket_ct_i]);
 
     while (current) {
         if (strcmp(current->uKey, pcKey) == 0) {
@@ -122,11 +121,11 @@ int SymTable_contains(SymTable_T oSymTable, const char *pcKey) {
 }
 
 void *SymTable_get(SymTable_T oSymTable, const char *pcKey) {
+    size_t index = SymTable_hash(pcKey, auBucketCounts[oSymTable->bucket_ct_i]);
     Binding_T current = oSymTable->buckets[index];
     assert(oSymTable != NULL);
     assert(pcKey != NULL);
 
-    size_t index = SymTable_hash(pcKey, auBucketCounts[oSymTable->bucket_ct_i]);
     while (current != NULL) {
         if (strcmp(current->uKey, pcKey) == 0) {
             return current->uValue;
@@ -137,12 +136,11 @@ void *SymTable_get(SymTable_T oSymTable, const char *pcKey) {
 }
 
 void *SymTable_remove(SymTable_T oSymTable, const char *pcKey) {
+    size_t index = SymTable_hash(pcKey, auBucketCounts[oSymTable->bucket_ct_i]);
     Binding_T current = oSymTable->buckets[index];
     Binding_T previous = NULL;
     assert(oSymTable != NULL);
     assert(pcKey != NULL);
-
-    size_t index = SymTable_hash(pcKey, auBucketCounts[oSymTable->bucket_ct_i]);
 
     while (current != NULL) {
         if (strcmp(current->uKey, pcKey) == 0) {
