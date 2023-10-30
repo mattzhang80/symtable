@@ -18,7 +18,7 @@ struct SymTable {
 };
 /*SymTable_new creates a new SymTable and returns a pointer to it.*/
 SymTable_T SymTable_new(void) {
-    SymTable_T oSymTable = (SymTable_T)sizeof(struct SymTable);
+    SymTable_T oSymTable = (SymTable_T)malloc(sizeof(struct SymTable));
     assert(oSymTable != NULL);
     oSymTable->head = NULL;
     oSymTable->length = 0;
@@ -36,6 +36,7 @@ void SymTable_free(SymTable_T oSymTable) {
         free(current);
         current = next;
     }
+    free(oSymTable);
 };
 
 size_t SymTable_getLength(SymTable_T oSymTable) {
@@ -86,6 +87,7 @@ void *SymTable_replace(SymTable_T oSymTable,
                 curr = curr -> next;
             }
         }
+        return NULL;
     }; 
 
 int SymTable_contains(SymTable_T oSymTable, const char *pcKey) {
@@ -100,6 +102,7 @@ int SymTable_contains(SymTable_T oSymTable, const char *pcKey) {
         }
         curr = curr -> next;
     }
+    return 0;
 };
 
 void *SymTable_get(SymTable_T oSymTable, const char *pcKey) {
@@ -132,12 +135,14 @@ void *SymTable_remove(SymTable_T oSymTable, const char *pcKey) {
             else {
                 prev -> next = curr -> next;
             }
+            void *prevValue = curr -> uValue;
+            free(curr -> uKey);
+            free(curr);
+            oSymTable -> length--;
+            return prevValue;
         }
-        void *prevValue = curr -> uValue;
-        free(curr ->uKey);
-        free(curr -> uValue);
-        oSymTable -> length--;
-        return prevValue;
+        prev = curr;
+        curr = curr -> next;
     }
 };
 
