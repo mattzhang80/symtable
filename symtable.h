@@ -2,6 +2,7 @@
 #define SYMTABLE_H
 
 #include <stdlib.h>
+
 /* SymTable_T is a pointer to a SymTable object. */
 typedef struct SymTable *SymTable_T;
 
