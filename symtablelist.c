@@ -3,17 +3,22 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* Binding is a node of the linked list that is the SymTable. It contains 
+   a key and a value, and a pointer to the next node in the list. */
 struct Binding {
     char *uKey;
     void *uValue;
     struct Binding *next;
 };
 
+/* SymTable is a linked list of Bindings. It contains a pointer to the 
+   first node in the list, and the length of the list. */
 struct SymTable {
     struct Binding *head;
     size_t length;
 };
 
+/* SymTable_new creates a new SymTable and returns a pointer to it. */
 SymTable_T SymTable_new(void) {
     SymTable_T oSymTable = malloc(sizeof(struct SymTable));
     if (!oSymTable) {
@@ -25,10 +30,9 @@ SymTable_T SymTable_new(void) {
 }
 
 void SymTable_free(SymTable_T oSymTable) {
-    if (!oSymTable) return;  // Added check for NULL pointer
-
     struct Binding *current = oSymTable->head;
     struct Binding *next;
+    if (!oSymTable) return;    
 
     while (current != NULL) {
         next = current->next;
@@ -45,16 +49,16 @@ size_t SymTable_getLength(SymTable_T oSymTable) {
 }
 
 int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
+    struct Binding *newB = malloc(sizeof(struct Binding));
     assert(oSymTable != NULL && pcKey != NULL);
 
     if (SymTable_contains(oSymTable, pcKey)) {
         return 0;
     }
 
-    char *keyCopy = strdup(pcKey);  // Using strdup to simplify code
+    char *keyCopy = strdup(pcKey);
     if (!keyCopy) return 0;
 
-    struct Binding *newB = malloc(sizeof(struct Binding));
     if (!newB) {
         free(keyCopy);
         return 0;
@@ -70,9 +74,10 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
 }
 
 void *SymTable_replace(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
-    assert(oSymTable != NULL && pcKey != NULL);
-
     struct Binding *curr = oSymTable->head;
+
+    assert(oSymTable != NULL);
+    assert(pcKey != NULL);
 
     while (curr != NULL) {
         if (strcmp(curr->uKey, pcKey) == 0) {
@@ -86,9 +91,9 @@ void *SymTable_replace(SymTable_T oSymTable, const char *pcKey, const void *pvVa
 }
 
 int SymTable_contains(SymTable_T oSymTable, const char *pcKey) {
-    assert(oSymTable != NULL && pcKey != NULL);
-
     struct Binding *curr = oSymTable->head;
+    assert(oSymTable != NULL);
+    assert(pcKey != NULL);
 
     while (curr != NULL) {
         if (strcmp(curr->uKey, pcKey) == 0) {
@@ -100,9 +105,9 @@ int SymTable_contains(SymTable_T oSymTable, const char *pcKey) {
 }
 
 void *SymTable_get(SymTable_T oSymTable, const char *pcKey) {
-    assert(oSymTable != NULL && pcKey != NULL);
-
     struct Binding *curr = oSymTable->head;
+    assert(oSymTable != NULL);
+    assert(pcKey != NULL);
 
     while (curr != NULL) {
         if (strcmp(curr->uKey, pcKey) == 0) {
@@ -114,10 +119,10 @@ void *SymTable_get(SymTable_T oSymTable, const char *pcKey) {
 }
 
 void *SymTable_remove(SymTable_T oSymTable, const char *pcKey) {
-    assert(oSymTable != NULL && pcKey != NULL);
-
     struct Binding *curr = oSymTable->head;
     struct Binding *prev = NULL;
+    
+    assert(oSymTable != NULL && pcKey != NULL);
 
     while (curr != NULL) {
         if (strcmp(curr->uKey, pcKey) == 0) {
@@ -139,9 +144,9 @@ void *SymTable_remove(SymTable_T oSymTable, const char *pcKey) {
 }
 
 void SymTable_map(SymTable_T oSymTable, void (*pfApply)(const char *pcKey, void *pvValue, void *pvExtra), const void *pvExtra) {
-    assert(oSymTable != NULL && pfApply != NULL);
-
     struct Binding *curr = oSymTable->head;
+    assert(oSymTable != NULL);
+    assert(pfApply != NULL);
 
     while (curr != NULL) {
         pfApply(curr->uKey, curr->uValue, (void *)pvExtra);
