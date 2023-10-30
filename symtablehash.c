@@ -107,7 +107,6 @@ void *SymTable_replace(SymTable_T oSymTable, const char *pcKey, const void *pvVa
 int SymTable_contains(SymTable_T oSymTable, const char *pcKey) {
     assert(oSymTable != NULL);
     assert(pcKey != NULL);
-
     size_t index = SymTable_hash(pcKey, bucketCounts[oSymTable->bucket_ct_i]);
     Binding_T current = oSymTable->buckets[index];
     while (current != NULL) {
