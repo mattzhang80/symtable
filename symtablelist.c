@@ -50,7 +50,6 @@ size_t SymTable_getLength(SymTable_T oSymTable) {
 
 int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
     struct Binding *newB;
-    struct Binding *curr;
     char *keyCopy;
     size_t keyLength;
 
