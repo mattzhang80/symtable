@@ -114,10 +114,10 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey,
 replaces its value and returns the old value. Otherwise, returns NULL. 
 The client must pass a valid symbol table pointer and a non-NULL key. */
 void *SymTable_replace(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
-    /* If the symbol table or key or value is NULL, return. */
-    assert(oSymTable != NULL && pcKey != NULL && pvValue != NULL);
     /* Creates a current pointer to the head of the symbol table. */
     struct Binding *current = oSymTable->head;
+    /* If the symbol table or key or value is NULL, return. */
+    assert(oSymTable != NULL && pcKey != NULL && pvValue != NULL);
     /* Iterates through the symbol table until the key is found. */
     while (current != NULL) {
         /* If the key is found, replace the value and return the old 
