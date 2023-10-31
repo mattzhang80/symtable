@@ -14,7 +14,9 @@ removes a key-value, and applies a function to all key-value Bindings*/
 symbol table. Each binding contains a unique key, associated value, and 
 a pointer to the next binding in the same bucket of the hash table. */
 typedef struct Binding {
+    /* Pointer to the key string. */
     char *uKey;
+    /* Pointer to the value. */
     void *uValue;
     /* Pointer to the next binding in the same bucket. */
     struct Binding *next;
@@ -23,8 +25,11 @@ typedef struct Binding {
 /*SymTable: A hash table-based symbol table, maps unique keys to values.
 The table dynamically resizes to maintain efficient operations. */
 struct SymTable {
+    /* Number of bindings in the symbol table. */
     size_t length;
+    /* Index of the current bucket count in the auBucketCounts array. */
     size_t bucket_ct_i;
+    /* Array of pointers to the first binding in each bucket. */
     Binding_T *buckets;
 };
 
@@ -36,7 +41,9 @@ static const size_t auBucketCounts[] = {509, 1021, 2039, 4093, 8191,
 
 /* SymTable_hash: Hashes a key (pcKey) to return an index for the 
 buckets array, ensuring a distribution that contributes to efficient 
-operations. The client must pass a non-NULL key string. */
+operations. The client must pass a non-NULL key string.  The function 
+returns an index in the range [0, uBucketCount - 1], which can be used 
+to access a specific bucket in the buckets array of the symbol table. */
 static size_t SymTable_hash(const char *pcKey, size_t uBucketCount) {
     const size_t HASH_MULTIPLIER = 65599;
     size_t u;
@@ -117,8 +124,11 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
     Binding_T newBinding;
     size_t index;
     char *keyCopy;
-    /* Check for NULL symbol table or key. */
-    if (oSymTable == NULL || pcKey == NULL) {
+
+    /* Check for NULL symbol table, key, or value. */
+    assert(pcKey != NULL);
+    assert(pvValue != NULL);
+    if (oSymTable == NULL) {
         return 0;
     }
     /* Check if key already exists. */
@@ -154,8 +164,10 @@ void *SymTable_replace(SymTable_T oSymTable, const char *pcKey, const void *pvVa
     size_t index;
     Binding_T current;
     void *oldValue;
-    /* Check for NULL symbol table or key. */
-    if (oSymTable == NULL || pcKey == NULL) {
+    /* Check for NULL symbol table, key, or value. */
+    assert(pcKey != NULL);
+    assert(pvValue != NULL);
+    if (oSymTable == NULL) {
         return NULL;
     }
     /* Check if key exists. */
@@ -181,8 +193,9 @@ must pass valid symbol table and key pointers. */
 int SymTable_contains(SymTable_T oSymTable, const char *pcKey) {
     size_t index;
     Binding_T current;
+    assert(pcKey != NULL);
     /* Check for NULL symbol table or key. */
-    if (oSymTable == NULL || pcKey == NULL) {
+    if (oSymTable == NULL) {
         return 0;
     }
     /* Check if key exists. */
@@ -208,7 +221,8 @@ void *SymTable_get(SymTable_T oSymTable, const char *pcKey) {
     size_t index;
     Binding_T current;
     /* Check for NULL symbol table or key. */
-    if (oSymTable == NULL || pcKey == NULL) {
+    assert(pcKey != NULL);
+    if (oSymTable == NULL) {
         return NULL;
     }
     /* Check if key exists. */
@@ -236,7 +250,8 @@ void *SymTable_remove(SymTable_T oSymTable, const char *pcKey) {
     Binding_T current, previous;
     void *value;
     /* Check for NULL symbol table or key. */
-    if (oSymTable == NULL || pcKey == NULL) {
+    assert(pcKey != NULL);
+    if (oSymTable == NULL) {
         return NULL;
     }
     /* Check if key exists. */
@@ -281,7 +296,9 @@ void SymTable_map(SymTable_T oSymTable, void (*pfApply)(const char
     size_t i;
     Binding_T current;
     /* Check for NULL symbol table or function pointer. */
-    if (oSymTable == NULL || pfApply == NULL) {
+    assert(pfApply != NULL);
+    assert(pvExtra != NULL);
+    if (oSymTable == NULL) {
         return;
     }
     /* Apply the function to each binding in the symbol table. */

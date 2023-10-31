@@ -20,44 +20,44 @@ or returns NULL if memory allocation fails. The new table is initially
 empty. */
 SymTable_T SymTable_new(void);
 
-/* SymTable_free: Frees all memory associated with the symbol table, 
+/* SymTable_free: Frees all memory associated with oSymTable, 
 including all bindings, their keys, and the table itself. The client 
 must not access the symbol table after this function is called. */
 void SymTable_free(SymTable_T oSymTable);
 
-/* SymTable_getLength: Returns the number of bindings in the symbol 
-table. The client must pass a valid symbol table pointer. */
+/* SymTable_getLength: Returns the number of bindings in the oSymTable. 
+The client must pass a valid symbol table pointer. */
 size_t SymTable_getLength(SymTable_T oSymTable);
 
 /* SymTable_put: Adds a new binding with the specified key and value to 
-the symbol table. Returns 1 if successful, or 0 if the key already 
+the oSymTable. Returns 1 if successful, or 0 if the key already 
 exists, memory allocation fails, or if the symbol table or key is NULL. 
 The key is copied, and the copy is owned by the symbol table. */
 int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue);
 
-/* SymTable_replace: If a binding with the specified key exists, 
-replaces its value and returns the old value. Otherwise, returns NULL. 
-The client must pass valid symbol table and key pointers. */
+/* SymTable_replace: If a binding with the specified pckey exists, 
+replaces its value with pvValue and returns the old value. Otherwise, 
+returns NULL. The client must pass valid symbol table & key pointers.*/
 void *SymTable_replace(SymTable_T oSymTable, const char *pcKey, const void *pvValue);
 
-/* SymTable_contains: Checks if a binding with the specified key exists 
-in the symbol table. Returns 1 if it exists, or 0 otherwise. The client 
-must pass valid symbol table and key pointers. */
+/* SymTable_contains: Checks if a binding with the specified pcKey 
+exists in the oSymTable. Returns 1 if it exists, or 0 otherwise. The 
+client must pass valid symbol table and key pointers. */
 int SymTable_contains(SymTable_T oSymTable, const char *pcKey);
 
-/* SymTable_get: If a binding with the specified key exists, returns its 
-value. Otherwise, returns NULL. The client must pass valid symbol table 
+/* SymTable_get: If a binding with the specified pcKey exists, returns its 
+value. Otherwise, returns NULL. The client must pass valid oSymTable 
 and key pointers. */
 void *SymTable_get(SymTable_T oSymTable, const char *pcKey);
 
-/* SymTable_remove: If a binding with the specified key exists, removes 
-it from the symbol table, frees the memory associated with the key, and 
+/* SymTable_remove: If a binding with the specified pcKey exists, removes 
+it from the oSymTable, frees the memory associated with the key, and 
 returns the value. Otherwise, returns NULL. The client must pass valid 
 symbol table and key pointers. */
 void *SymTable_remove(SymTable_T oSymTable, const char *pcKey);
 
-/* SymTable_map: Applies function pfApply to each binding in the symbol
-table, passing pvExtra as an extra parameter. The client must pass a
+/* SymTable_map: Applies function pfApply to each binding in the 
+oSymTable, passing pvExtra as an extra parameter. The client must pass a
 valid symbol table pointer and a valid function pointer. */
 void SymTable_map(SymTable_T oSymTable, void (*pfApply)(const char *pcKey, void *pvValue, void *pvExtra), const void *pvExtra);
 
