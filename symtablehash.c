@@ -20,7 +20,9 @@ typedef struct Binding {
     void *uValue;
     /* Pointer to the next binding in the same bucket. */
     struct Binding *next;
-} *Binding_T; /* Binding_T is a pointer to a Binding object. */
+} 
+/* Pointer to a Binding. */
+*Binding_T; 
 
 /*SymTable: A hash table-based symbol table, maps unique keys to values.
 The table dynamically resizes to maintain efficient operations. */
