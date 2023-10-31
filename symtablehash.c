@@ -40,6 +40,8 @@ bucket counts in the hash table, used to resize the table and maintain
 efficient operations. */
 static const size_t auBucketCounts[] = {509, 1021, 2039, 4093, 8191, 
     16381, 32749, 65521};
+static const size_t numBucketCounts = 
+    sizeof(auBucketCounts)/sizeof(auBucketCounts[0]);
 
 /* SymTable_hash: Hashes a key (pcKey) to return an index for the 
 buckets array, ensuring a distribution that contributes to efficient 
@@ -156,22 +158,53 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
     oSymTable->length++;
     /* If the symbol table is full, resize it. */
     if (oSymTable->length == auBucketCounts[oSymTable->bucket_ct_i]) {
-        /* Resize the symbol table. */
-        SymTable_T newTable = SymTable_new();
-        /* Check for memory allocation failure. */
-        if (newTable == NULL) {
-            return 0;
-        }
-        /* Add all bindings to the new symbol table. */
-        SymTable_map(oSymTable, (void *)SymTable_put, newTable);
-        /* Free the old symbol table. */
-        SymTable_free(oSymTable);
-        /* Update the symbol table pointer. */
-        oSymTable = newTable;
+        SymTable_resize(oSymTable);
     }
-    /*Return 1 if successful. */
+}
+int SymTable_resize(SymTable_T oSymTable) {
+    size_t i;
+    Binding_T current, next;
+    Binding_T *newBuckets;
+    size_t newBucketCount;
+    /* Check for NULL symbol table. */
+    assert(oSymTable != NULL);
+    /* Check if the symbol table is full. */
+    if (oSymTable->length != auBucketCounts[oSymTable->bucket_ct_i]) {
+        return 0;
+    }
+    /* Check if the symbol table has reached the maximum bucket count. */
+    if (oSymTable->bucket_ct_i == numBucketCounts - 1) {
+        return 0;
+    }
+    /* Allocate memory for the new buckets array. */
+    newBucketCount = auBucketCounts[oSymTable->bucket_ct_i + 1];
+    newBuckets = (Binding_T *)calloc(newBucketCount, sizeof(Binding_T));
+    /* Check for memory allocation failure. */
+    if (newBuckets == NULL) {
+        return 0;
+    }
+    /* Rehash the bindings in the symbol table. */
+    for (i = 0; i < auBucketCounts[oSymTable->bucket_ct_i]; ++i) {
+        current = oSymTable->buckets[i];
+        /* Rehash the bindings in the current bucket. */
+        while (current != NULL) {
+            next = current->next;
+            /* Add the binding to the new buckets array. */
+            current->next = newBuckets[SymTable_hash(current->uKey, 
+                newBucketCount)];
+            newBuckets[SymTable_hash(current->uKey, newBucketCount)] = current;
+            current = next;
+        }
+    }
+    /* Free the old buckets array and update the symbol table. */
+    free(oSymTable->buckets);
+    oSymTable->buckets = newBuckets;
+    oSymTable->bucket_ct_i++;
+    /* Return 1 if successful. */
     return 1;
 }
+
+
 /* SymTable_replace: If a binding with the specified key exists, 
 replaces its value and returns the old value. Otherwise, returns NULL. 
 The client must pass valid symbol table and key pointers. */
