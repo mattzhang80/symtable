@@ -178,6 +178,7 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
     char *keyCopy;
 
     /* Check for NULL symbol table, key, or value. */
+    assert(pvValue != NULL);
     assert(pcKey != NULL);
     if (oSymTable == NULL) {
         return 0;
