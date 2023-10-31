@@ -1,41 +1,64 @@
+/*This header file defines the interface for a symbol table, a data 
+structure that maps unique string keys to associated values. This 
+implementation can create an empty symbol table, free a symbol 
+table, get the length of a symbol table, put a key-value binding into 
+the symbol table, replace the value of a key-value with another value, 
+check if a symbol table contains a key, gets the value from a key-value, 
+removes a key-value, and applies a function to all key-value Bindings*/
 #ifndef SYMTABLE_H
 #define SYMTABLE_H
-
+#include <assert.h>
 #include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 
-/* Opaque pointer to a symbol table. */
+/* SymTable_T is a pointer to a SymTable object. */
 typedef struct SymTable *SymTable_T;
 
-/* Function to create a new symbol table. */
+/* SymTable_new: Allocates, initializes, and returns a new symbol table, 
+or returns NULL if memory allocation fails. The new table is initially 
+empty. */
 SymTable_T SymTable_new(void);
 
-/* Function to free all memory occupied by the symbol table. */
+/* SymTable_free: Frees all memory associated with the symbol table, 
+including all bindings, their keys, and the table itself. The client 
+must not access the symbol table after this function is called. */
 void SymTable_free(SymTable_T oSymTable);
 
-/* Function to get the number of bindings in the symbol table. */
+/* SymTable_getLength: Returns the number of bindings in the symbol 
+table. The client must pass a valid symbol table pointer. */
 size_t SymTable_getLength(SymTable_T oSymTable);
 
-/* Function to insert a new binding into the symbol table.
-   Returns 1 (true) if the binding was added, and 0 (false) if the key is already in the table. */
+/* SymTable_put: Adds a new binding with the specified key and value to 
+the symbol table. Returns 1 if successful, or 0 if the key already 
+exists, memory allocation fails, or if the symbol table or key is NULL. 
+The key is copied, and the copy is owned by the symbol table. */
 int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue);
 
-/* Function to replace the value of an existing binding in the symbol table.
-   Returns the old value if the binding exists, and NULL otherwise. */
+/* SymTable_replace: If a binding with the specified key exists, 
+replaces its value and returns the old value. Otherwise, returns NULL. 
+The client must pass valid symbol table and key pointers. */
 void *SymTable_replace(SymTable_T oSymTable, const char *pcKey, const void *pvValue);
 
-/* Function to check if a binding with the given key exists in the symbol table.
-   Returns 1 (true) if the binding exists, and 0 (false) otherwise. */
+/* SymTable_contains: Checks if a binding with the specified key exists 
+in the symbol table. Returns 1 if it exists, or 0 otherwise. The client 
+must pass valid symbol table and key pointers. */
 int SymTable_contains(SymTable_T oSymTable, const char *pcKey);
 
-/* Function to get the value of a binding in the symbol table.
-   Returns the value if the binding exists, and NULL otherwise. */
-void *SymTable_get(SymTable_T oSymTable, const char *pcKey);
+/* SymTable_get: If a binding with the specified key exists, returns its 
+value. Otherwise, returns NULL. The client must pass valid symbol table 
+and key pointers. */
+void *SymTable_get(SymTable_T oSymTable, const char *pcKey);s
 
-/* Function to remove a binding from the symbol table.
-   Returns the value of the removed binding if it exists, and NULL otherwise. */
+/* SymTable_remove: If a binding with the specified key exists, removes 
+it from the symbol table, frees the memory associated with the key, and 
+returns the value. Otherwise, returns NULL. The client must pass valid 
+symbol table and key pointers. */
 void *SymTable_remove(SymTable_T oSymTable, const char *pcKey);
 
-/* Function to apply a function to all bindings in the symbol table. */
+/* SymTable_map: Applies function pfApply to each binding in the symbol
+table, passing pvExtra as an extra parameter. The client must pass a
+valid symbol table pointer and a valid function pointer. */
 void SymTable_map(SymTable_T oSymTable, void (*pfApply)(const char *pcKey, void *pvValue, void *pvExtra), const void *pvExtra);
 
 #endif /* SYMTABLE_H */

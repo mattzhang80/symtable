@@ -26,13 +26,17 @@ struct SymTable {
 
 /* SymTable_new: Create and initialize a new symbol table. 
 Return NULL if memory allocation fails. */
-SymTable_T SymTable_new(void) {
+SymTable_T SymTable_new(void) {\
+    /* Allocate memory for the symbol table. */
     SymTable_T oSymTable = malloc(sizeof(struct SymTable));
+    /* If memory allocation fails, return NULL. */
     if (!oSymTable) {
         return NULL;  
     }
+    /* Initialize the symbol table. */
     oSymTable->head = NULL;
     oSymTable->length = 0;
+    /* Return the symbol table. */
     return oSymTable;
 }
 
@@ -43,21 +47,26 @@ SymTable_free. */
 void SymTable_free(SymTable_T oSymTable) {
     struct Binding *current = oSymTable->head;
     struct Binding *next;
+    /* If the symbol table is NULL, return. */
     if (!oSymTable) return;    
-
+    /* Free all the bindings in the symbol table. */
     while (current != NULL) {
+        /* Store the next binding. */
         next = current->next;
         free(current->uKey);
         free(current);
         current = next;
     }
+    /* Free the symbol table. */
     free(oSymTable);
 }
 
 /* SymTable_getLength: Returns the number of bindings in the symbol 
 table. The client must pass a valid symbol table pointer. */
 size_t SymTable_getLength(SymTable_T oSymTable) {
+    /* If the symbol table is NULL, return. */
     assert(oSymTable != NULL);
+    /* Return the length of the symbol table. */
     return oSymTable->length;
 }
 
@@ -71,33 +80,36 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey,
         struct Binding *newB;
         char *keyCopy;
         size_t keyLength;
-
+        /* If the symbol table or key or value is NULL, return. */
         assert(oSymTable != NULL);
         assert(pcKey != NULL);
-
+        assert(pvValue != NULL);
+        /* If the key already exists, return. */
         if (SymTable_contains(oSymTable, pcKey)) {
             return 0;
         }
-
+        /* Allocate memory for the key. */
         keyLength = strlen(pcKey) + 1;
         keyCopy = (char *)malloc(keyLength);
+        /* If memory allocation fails, return. */
         if (keyCopy == NULL) {
             return 0; 
         }   
         strcpy(keyCopy, pcKey);
-
+        /* Allocate memory for the binding. */
        newB = (struct Binding *)malloc(sizeof(struct Binding));
+       /* If memory allocation fails, free the key and return. */
         if (newB == NULL) {
             free(keyCopy);  
             return 0; 
         }
-
+        /* Initialize the binding. */
         newB->uKey = keyCopy;
         newB->uValue = (void *)pvValue;
         newB->next = oSymTable->head;
         oSymTable->head = newB;
         oSymTable->length++;
-
+        /* Return 1 to indicate success. */
         return 1;
 }
 
@@ -107,9 +119,10 @@ The client must pass a valid symbol table pointer and a non-NULL key. */
 void *SymTable_replace(SymTable_T oSymTable, const char *pcKey, const 
     void *pvValue) {
     struct Binding *curr = oSymTable->head;
-
+    /* If the symbol table or key or value is NULL, return. */
     assert(oSymTable != NULL);
     assert(pcKey != NULL);
+    assert(pvValue != NULL);
 
     while (curr != NULL) {
         if (strcmp(curr->uKey, pcKey) == 0) {
@@ -196,6 +209,7 @@ void SymTable_map(SymTable_T oSymTable, void (*pfApply)(const char
     struct Binding *curr = oSymTable->head;
     assert(oSymTable != NULL);
     assert(pfApply != NULL);
+    assert(pvExtra != NULL);
 
     while (curr != NULL) {
         pfApply(curr->uKey, curr->uValue, (void *)pvExtra);
