@@ -122,7 +122,7 @@ void *SymTable_replace(SymTable_T oSymTable, const char *pcKey, const void *pvVa
     /* Creates a current pointer to the head of the symbol table. */
     struct Binding *current = oSymTable->head;
     /* If the symbol table or key or value is NULL, return. */
-    assert(oSymTable != NULL && pcKey != NULL && pvValue != NULL);
+    assert(oSymTable != NULL && pcKey != NULL);
     /* Iterates through the symbol table until the key is found. */
     while (current != NULL) {
         /* If the key is found, replace the value and return the old 

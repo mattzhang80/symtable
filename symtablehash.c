@@ -167,7 +167,6 @@ void *SymTable_replace(SymTable_T oSymTable, const char *pcKey, const void *pvVa
     void *oldValue;
     /* Check for NULL symbol table, key, or value. */
     assert(pcKey != NULL);
-    assert(pvValue != NULL);
     if (oSymTable == NULL) {
         return NULL;
     }
