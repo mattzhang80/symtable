@@ -12,15 +12,20 @@ removes a key-value, and applies a function to all key-value Bindings*/
 /* Binding is a node in the linked list that represents a symbol table. 
    It contains a key-value pair and a pointer to the next node. */
 struct Binding {
+    /* The key is a string. */
     char *uKey;
+    /* The value is a void pointer. */
     void *uValue;
+    /* The next pointer points to the next node in the linked list. */
     struct Binding *next;
 };
 
 /* SymTable is a linked list of Bindings. It contains a pointer to the 
    first node in the list, and the length of the list. */
 struct SymTable {
+    /* The head pointer points to the first node in the linked list. */
     struct Binding *head;
+    /* The length of the linked list. */
     size_t length;
 };
 
@@ -81,6 +86,7 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey,
         /* If the symbol table or key or value is NULL, return. */
         assert(oSymTable != NULL);
         assert(pcKey != NULL);
+        assert(pvValue != NULL);
         /* If the key already exists, return. */
         if (SymTable_contains(oSymTable, pcKey)) {
             return 0;
@@ -208,6 +214,7 @@ void SymTable_map(SymTable_T oSymTable, void (*pfApply)(const char
     struct Binding *curr = oSymTable->head;
     assert(oSymTable != NULL);
     assert(pfApply != NULL);
+    assert(pvExtra != NULL);
 
     while (curr != NULL) {
         pfApply(curr->uKey, curr->uValue, (void *)pvExtra);
