@@ -149,12 +149,26 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
         return 0;
     }
     /* Add new binding to the symbol table. */
-    /* If the symbol table is full, resize it. */
     newBinding->uKey = keyCopy;
     newBinding->uValue = (void *)pvValue;
     newBinding->next = oSymTable->buckets[index];
     oSymTable->buckets[index] = newBinding;
     oSymTable->length++;
+    /* If the symbol table is full, resize it. */
+    if (oSymTable->length == auBucketCounts[oSymTable->bucket_ct_i]) {
+        /* Resize the symbol table. */
+        SymTable_T newTable = SymTable_new();
+        /* Check for memory allocation failure. */
+        if (newTable == NULL) {
+            return 0;
+        }
+        /* Add all bindings to the new symbol table. */
+        SymTable_map(oSymTable, SymTable_put, newTable);
+        /* Free the old symbol table. */
+        SymTable_free(oSymTable);
+        /* Update the symbol table pointer. */
+        oSymTable = newTable;
+    }
     /*Return 1 if successful. */
     return 1;
 }
