@@ -86,7 +86,6 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey,
         /* If the symbol table or key or value is NULL, return. */
         assert(oSymTable != NULL);
         assert(pcKey != NULL);
-        assert(pvValue != NULL);
         /* If the key already exists, return. */
         if (SymTable_contains(oSymTable, pcKey)) {
             return 0;
