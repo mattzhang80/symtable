@@ -26,9 +26,9 @@ struct SymTable {
 
 /* SymTable_new: Create and initialize a new symbol table. 
 Return NULL if memory allocation fails. */
-SymTable_T SymTable_new(void) {\
+SymTable_T SymTable_new(void) {
     /* Allocate memory for the symbol table. */
-    SymTable_T oSymTable = malloc(sizeof(struct SymTable));
+    SymTable_T oSymTable = (SymTable_T)malloc(sizeof(struct SymTable));
     /* If memory allocation fails, return NULL. */
     if (!oSymTable) {
         return NULL;  
@@ -40,10 +40,9 @@ SymTable_T SymTable_new(void) {\
     return oSymTable;
 }
 
-/* SymTable_new: Allocates and returns a new symbol table, initializing 
-it to be empty. Returns NULL if memory allocation fails. 
-The client is responsible for eventually freeing the symbol table with 
-SymTable_free. */
+/* SymTable_free: Frees all memory associated with the symbol table, 
+including all bindings, their keys, and the table itself. The client 
+must not access the symbol table after this function is called. */
 void SymTable_free(SymTable_T oSymTable) {
     struct Binding *current = oSymTable->head;
     struct Binding *next;
@@ -82,7 +81,6 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey,
         /* If the symbol table or key or value is NULL, return. */
         assert(oSymTable != NULL);
         assert(pcKey != NULL);
-        assert(pvValue != NULL);
         /* If the key already exists, return. */
         if (SymTable_contains(oSymTable, pcKey)) {
             return 0;
@@ -115,22 +113,24 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey,
 /* SymTable_replace: If a binding with the specified key exists, 
 replaces its value and returns the old value. Otherwise, returns NULL. 
 The client must pass a valid symbol table pointer and a non-NULL key. */
-void *SymTable_replace(SymTable_T oSymTable, const char *pcKey, const 
-    void *pvValue) {
-    struct Binding *curr = oSymTable->head;
+void *SymTable_replace(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
     /* If the symbol table or key or value is NULL, return. */
-    assert(oSymTable != NULL);
-    assert(pcKey != NULL);
-    assert(pvValue != NULL);
-
-    while (curr != NULL) {
-        if (strcmp(curr->uKey, pcKey) == 0) {
-            void *prevValue = curr->uValue;
-            curr->uValue = (void *)pvValue;
-            return prevValue;
+    assert(oSymTable != NULL && pcKey != NULL && pvValue != NULL);
+    /* Creates a current pointer to the head of the symbol table. */
+    struct Binding *current = oSymTable->head;
+    /* Iterates through the symbol table until the key is found. */
+    while (current != NULL) {
+        /* If the key is found, replace the value and return the old 
+        value. */
+        if (strcmp(current->uKey, pcKey) == 0) {
+            void *oldValue = current->uValue;
+            current->uValue = (void *)pvValue;
+            return oldValue;
         }
-        curr = curr->next;
+        /* Otherwise, continue iterating through the symbol table. */
+        current = current->next;
     }
+    /* If the key is not found, return NULL. */
     return NULL;
 }
 
@@ -208,7 +208,6 @@ void SymTable_map(SymTable_T oSymTable, void (*pfApply)(const char
     struct Binding *curr = oSymTable->head;
     assert(oSymTable != NULL);
     assert(pfApply != NULL);
-    assert(pvExtra != NULL);
 
     while (curr != NULL) {
         pfApply(curr->uKey, curr->uValue, (void *)pvExtra);
