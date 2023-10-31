@@ -48,7 +48,7 @@ int SymTable_contains(SymTable_T oSymTable, const char *pcKey);
 /* SymTable_get: If a binding with the specified key exists, returns its 
 value. Otherwise, returns NULL. The client must pass valid symbol table 
 and key pointers. */
-void *SymTable_get(SymTable_T oSymTable, const char *pcKey);s
+void *SymTable_get(SymTable_T oSymTable, const char *pcKey);
 
 /* SymTable_remove: If a binding with the specified key exists, removes 
 it from the symbol table, frees the memory associated with the key, and 
