@@ -160,7 +160,11 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
     if (oSymTable->length == auBucketCounts[oSymTable->bucket_ct_i]) {
         SymTable_resize(oSymTable);
     }
+    /* Return 1 if successful. */
+    return 1;
 }
+
+/* SymTable_resize: Resizes the symbol table to the next bucket count*/
 int SymTable_resize(SymTable_T oSymTable) {
     size_t i;
     Binding_T current, next;
