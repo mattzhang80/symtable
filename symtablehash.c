@@ -163,7 +163,7 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
             return 0;
         }
         /* Add all bindings to the new symbol table. */
-        SymTable_map(oSymTable, SymTable_put, newTable);
+        SymTable_map(oSymTable, (void *)SymTable_put, newTable);
         /* Free the old symbol table. */
         SymTable_free(oSymTable);
         /* Update the symbol table pointer. */
