@@ -169,7 +169,7 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
 Client must input a valid oSymTable, and the function will return 
 returns 1 if successful, while it returns 0 if the symbol table has 
 reached the max bucket count or is full or fails to allocate memory*/
-int SymTable_resize(SymTable_T oSymTable) {
+static int SymTable_resize(SymTable_T oSymTable) {
     size_t i;
     Binding_T curr, next;
     Binding_T *newBuckets;
