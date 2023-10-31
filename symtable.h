@@ -35,6 +35,9 @@ exists, memory allocation fails, or if the symbol table or key is NULL.
 The key is copied, and the copy is owned by the symbol table. */
 int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue);
 
+/* SymTable_resize: Resizes the oSymTable to the specified size. */
+int SymTable_resize(SymTable_T oSymTable);
+
 /* SymTable_replace: If a binding with the specified pcKey exists, 
 replaces its value with pvValue and returns the old value. Otherwise, 
 returns NULL. The client must pass valid oSymTable & key pointers.*/
