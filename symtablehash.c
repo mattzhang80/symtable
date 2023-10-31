@@ -88,7 +88,7 @@ static int SymTable_resize(SymTable_T oSymTable) {
     if (newBuckets == NULL) {
         return 0;
     }
-    /* Rehash the bindings in the symbol table. */x
+    /* Rehash the bindings in the symbol table. */
     for (i = 0; i < auBucketCounts[oSymTable->bucket_ct_i]; ++i) {
         curr = oSymTable->buckets[i];
         /* Rehash the bindings in the current bucket. */
