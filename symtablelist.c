@@ -86,7 +86,7 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey,
     const void *pvValue) {
         struct Binding *newB;
         char *keyCopy;
-        size_t keyLength;
+        size_t keyLen;
         /* If the symbol table or key or value is NULL, return. */
         assert(oSymTable != NULL);
         assert(pcKey != NULL);
@@ -95,8 +95,8 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey,
             return 0;
         }
         /* Allocate memory for the key. */
-        keyLength = strlen(pcKey) + 1;
-        keyCopy = (char *)malloc(keyLength);
+        keyLen = strlen(pcKey) + 1;
+        keyCopy = (char *)malloc(keyLen);
         /* If memory allocation fails, return. */
         if (keyCopy == NULL) {
             return 0; 
@@ -200,8 +200,7 @@ void *SymTable_remove(SymTable_T oSymTable, const char *pcKey) {
     assert(pcKey != NULL);
     /* Iterates through the symbol table until the key is found. */
     while (curr != NULL) {
-        /* If the key is found, remove the binding and return its value. 
-        */
+        /* If key is found, remove the binding and return its value. */
         if (strcmp(curr->uKey, pcKey) == 0) {
             /* If the binding is the head, update the head. */
             if (prev == NULL) {
@@ -211,6 +210,7 @@ void *SymTable_remove(SymTable_T oSymTable, const char *pcKey) {
             else {
                 prev->next = curr->next;
             }
+            /* Store the value and free the binding and key. */
             val = curr->uValue;
             free(curr->uKey);
             free(curr);

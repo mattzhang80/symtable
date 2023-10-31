@@ -142,20 +142,20 @@ including all bindings, their keys, and the table itself. The client
 must not access the symbol table after this function is called. */
 void SymTable_free(SymTable_T oSymTable) {
     size_t i;
-    Binding_T current, next;
+    Binding_T curr, next;
     /* Check for NULL symbol table. */
     if (oSymTable == NULL) {
         return;
     }
     /* Free all bindings in the symbol table. */
     for (i = 0; i < auBucketCounts[oSymTable->bucket_ct_i]; ++i) {
-        current = oSymTable->buckets[i];
+        curr = oSymTable->buckets[i];
         /* Free all bindings in the current bucket. */
-        while (current != NULL) {
-            next = current->next;
-            free(current->uKey);
-            free(current);
-            current = next;
+        while (curr != NULL) {
+            next = curr->next;
+            free(curr->uKey);
+            free(curr);
+            curr = next;
         }
     }
     /* Free the buckets array and the symbol table. */
@@ -176,9 +176,9 @@ the symbol table. Returns 1 if successful, or 0 if the key already
 exists, memory allocation fails, or if the symbol table or key is NULL. 
 The key is copied, and the copy is owned by the symbol table. */
 int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
-    Binding_T newBinding;
-    size_t index;
-    char *keyCopy;
+    Binding_T newB;
+    size_t hashIndex;
+    char *copyKey;
 
     /* Check for NULL symbol table, key, or value. */
     assert(pcKey != NULL);
@@ -189,23 +189,25 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
     if (SymTable_contains(oSymTable, pcKey)) {
         return 0;
     }
-    index = SymTable_hash(pcKey, auBucketCounts[oSymTable->bucket_ct_i]);
-    keyCopy = (char *)malloc(strlen(pcKey) + 1);
+    /* Hash the key and copy it. */
+    hashIndex = SymTable_hash(pcKey, auBucketCounts[oSymTable->bucket_ct_i]);
+    copyKey = (char *)malloc(strlen(pcKey) + 1);
     /* Check for memory allocation failure. */
-    if (keyCopy == NULL) return 0;
-    strcpy(keyCopy, pcKey);
-
-    newBinding = (Binding_T)malloc(sizeof(struct Binding));
+    if (copyKey == NULL) return 0;
+    /* Copy the key. */
+    strcpy(copyKey, pcKey);
+    /* Allocate memory for the new binding. */
+    newB = (Binding_T)malloc(sizeof(struct Binding));
     /* Check for memory allocation failure. */
-    if (newBinding == NULL) {
-        free(keyCopy);
+    if (newB == NULL) {
+        free(copyKey);
         return 0;
     }
     /* Add new binding to the symbol table. */
-    newBinding->uKey = keyCopy;
-    newBinding->uValue = (void *)pvValue;
-    newBinding->next = oSymTable->buckets[index];
-    oSymTable->buckets[index] = newBinding;
+    newB->uKey = copyKey;
+    newB->uValue = (void *)pvValue;
+    newB->next = oSymTable->buckets[hashIndex];
+    oSymTable->buckets[hashIndex] = newB;
     oSymTable->length++;
     /* If the symbol table is full, resize it. */
     if (oSymTable->length == auBucketCounts[oSymTable->bucket_ct_i]) {
@@ -219,26 +221,26 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
 replaces its value and returns the old value. Otherwise, returns NULL. 
 The client must pass valid symbol table and key pointers. */
 void *SymTable_replace(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
-    size_t index;
-    Binding_T current;
-    void *oldValue;
+    size_t hashIndex;
+    Binding_T curr;
+    void *oldVal;
     /* Check for NULL symbol table, key, or value. */
     assert(pcKey != NULL);
     if (oSymTable == NULL) {
         return NULL;
     }
     /* Check if key exists. */
-    index = SymTable_hash(pcKey, auBucketCounts[oSymTable->bucket_ct_i]);
-    current = oSymTable->buckets[index];
+    hashIndex = SymTable_hash(pcKey, auBucketCounts[oSymTable->bucket_ct_i]);
+    curr = oSymTable->buckets[hashIndex];
     /* Replace the value if the key exists. */
-    while (current != NULL) {
+    while (curr != NULL) {
         /* If the key exists, replace the value and return the old value. */
-        if (strcmp(current->uKey, pcKey) == 0) {
-            oldValue = current->uValue;
-            current->uValue = (void *)pvValue;
-            return oldValue;
+        if (strcmp(curr->uKey, pcKey) == 0) {
+            oldVal = curr->uValue;
+            curr->uValue = (void *)pvValue;
+            return oldVal;
         }
-        current = current->next;
+        curr = curr->next;
     }
     /* Return NULL if the key does not exist. */
     return NULL;
