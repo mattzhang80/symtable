@@ -40,6 +40,7 @@ bucket counts in the hash table, used to resize the table and maintain
 efficient operations. */
 static const size_t auBucketCounts[] = {509, 1021, 2039, 4093, 8191, 
     16381, 32749, 65521};
+/* Number of elements in the auBucketCounts array. */
 static const size_t numBucketCounts = 
     sizeof(auBucketCounts)/sizeof(auBucketCounts[0]);
 

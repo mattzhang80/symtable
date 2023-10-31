@@ -35,7 +35,10 @@ exists, memory allocation fails, or if the symbol table or key is NULL.
 The key is copied, and the copy is owned by the symbol table. */
 int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue);
 
-/* SymTable_resize: Resizes the oSymTable to the specified size. */
+/* SymTable_resize: Resizes the symbol table to the next bucket count.
+Client must input a valid oSymTable, and the function will return 
+returns 1 if successful, while it returns 0 if the symbol table has 
+reached the max bucket count or is full or fails to allocate memory*/
 int SymTable_resize(SymTable_T oSymTable);
 
 /* SymTable_replace: If a binding with the specified pcKey exists, 
