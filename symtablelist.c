@@ -215,7 +215,7 @@ void SymTable_map(SymTable_T oSymTable, void (*pfApply)(const char
     assert(pfApply != NULL);
 
     while (curr != NULL) {
-        pfApply(curr->uKey, curr->uValue, (void *)pvExtra);
+        (*pfApply)(curr->uKey, curr->uValue, (void *)pvExtra);
         curr = curr->next;
     }
 }
