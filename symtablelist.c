@@ -65,7 +65,7 @@ void SymTable_free(SymTable_T oSymTable) {
 table. The client must pass a valid symbol table pointer. */
 size_t SymTable_getLength(SymTable_T oSymTable) {
     /* If the symbol table is NULL, return. */
-    assert(oSymTable != NULL);
+    if (!oSymTable) return 0;
     /* Return the length of the symbol table. */
     return oSymTable->length;
 }
