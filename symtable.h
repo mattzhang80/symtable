@@ -29,15 +29,15 @@ void SymTable_free(SymTable_T oSymTable);
 The client must pass a valid symbol table pointer. */
 size_t SymTable_getLength(SymTable_T oSymTable);
 
-/* SymTable_put: Adds a new binding with the specified key and value to 
-the oSymTable. Returns 1 if successful, or 0 if the key already 
+/* SymTable_put: Adds a new binding with the specified pcKey and pvValue 
+to the oSymTable. Returns 1 if successful, or 0 if the key already 
 exists, memory allocation fails, or if the symbol table or key is NULL. 
 The key is copied, and the copy is owned by the symbol table. */
 int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue);
 
-/* SymTable_replace: If a binding with the specified pckey exists, 
+/* SymTable_replace: If a binding with the specified pcKey exists, 
 replaces its value with pvValue and returns the old value. Otherwise, 
-returns NULL. The client must pass valid symbol table & key pointers.*/
+returns NULL. The client must pass valid oSymTable & key pointers.*/
 void *SymTable_replace(SymTable_T oSymTable, const char *pcKey, const void *pvValue);
 
 /* SymTable_contains: Checks if a binding with the specified pcKey 
