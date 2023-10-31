@@ -298,7 +298,6 @@ void SymTable_map(SymTable_T oSymTable, void (*pfApply)(const char
     Binding_T current;
     /* Check for NULL symbol table or function pointer. */
     assert(pfApply != NULL);
-    assert(pvExtra != NULL);
     if (oSymTable == NULL) {
         return;
     }
