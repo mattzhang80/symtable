@@ -62,6 +62,53 @@ static size_t SymTable_hash(const char *pcKey, size_t uBucketCount) {
     return uHash % uBucketCount;
 }
 
+/* SymTable_resize: Resizes the symbol table to the next bucket count.
+Client must input a valid oSymTable, and the function will return 
+returns 1 if successful, while it returns 0 if the symbol table has 
+reached the max bucket count or is full or fails to allocate memory*/
+static int SymTable_resize(SymTable_T oSymTable) {
+    size_t i;
+    Binding_T curr, next;
+    Binding_T *newBuckets;
+    size_t newBucketCount;
+    /* Check for NULL symbol table. */
+    assert(oSymTable != NULL);
+    /* Check if the symbol table is full. */
+    if (oSymTable->length != auBucketCounts[oSymTable->bucket_ct_i]) {
+        return 0;
+    }
+    /* Check if the symbol table has reached the maximum bucket count. */
+    if (oSymTable->bucket_ct_i == numBucketCounts - 1) {
+        return 0;
+    }
+    /* Allocate memory for the new buckets array. */
+    newBucketCount = auBucketCounts[oSymTable->bucket_ct_i + 1];
+    newBuckets = (Binding_T *)calloc(newBucketCount, sizeof(Binding_T));
+    /* Check for memory allocation failure. */
+    if (newBuckets == NULL) {
+        return 0;
+    }
+    /* Rehash the bindings in the symbol table. */x
+    for (i = 0; i < auBucketCounts[oSymTable->bucket_ct_i]; ++i) {
+        curr = oSymTable->buckets[i];
+        /* Rehash the bindings in the current bucket. */
+        while (curr != NULL) {
+            next = curr->next;
+            /* Add the binding to the new buckets array. */
+            curr->next = newBuckets[SymTable_hash(curr->uKey, 
+                newBucketCount)];
+            newBuckets[SymTable_hash(curr->uKey, newBucketCount)]= curr;
+            curr = next;
+        }
+    }
+    /* Free the old buckets array and update the symbol table. */
+    free(oSymTable->buckets);
+    oSymTable->buckets = newBuckets;
+    oSymTable->bucket_ct_i++;
+    /* Return 1 if successful. */
+    return 1;
+}
+
 /* SymTable_new: Allocates, initializes, and returns a new symbol table, 
 or returns NULL if memory allocation fails. 
 The new table is initially empty and has a default number of buckets. */
@@ -164,54 +211,6 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
     /* Return 1 if successful. */
     return 1;
 }
-
-/* SymTable_resize: Resizes the symbol table to the next bucket count.
-Client must input a valid oSymTable, and the function will return 
-returns 1 if successful, while it returns 0 if the symbol table has 
-reached the max bucket count or is full or fails to allocate memory*/
-static int SymTable_resize(SymTable_T oSymTable) {
-    size_t i;
-    Binding_T curr, next;
-    Binding_T *newBuckets;
-    size_t newBucketCount;
-    /* Check for NULL symbol table. */
-    assert(oSymTable != NULL);
-    /* Check if the symbol table is full. */
-    if (oSymTable->length != auBucketCounts[oSymTable->bucket_ct_i]) {
-        return 0;
-    }
-    /* Check if the symbol table has reached the maximum bucket count. */
-    if (oSymTable->bucket_ct_i == numBucketCounts - 1) {
-        return 0;
-    }
-    /* Allocate memory for the new buckets array. */
-    newBucketCount = auBucketCounts[oSymTable->bucket_ct_i + 1];
-    newBuckets = (Binding_T *)calloc(newBucketCount, sizeof(Binding_T));
-    /* Check for memory allocation failure. */
-    if (newBuckets == NULL) {
-        return 0;
-    }
-    /* Rehash the bindings in the symbol table. */
-    for (i = 0; i < auBucketCounts[oSymTable->bucket_ct_i]; ++i) {
-        curr = oSymTable->buckets[i];
-        /* Rehash the bindings in the current bucket. */
-        while (curr != NULL) {
-            next = curr->next;
-            /* Add the binding to the new buckets array. */
-            curr->next = newBuckets[SymTable_hash(curr->uKey, 
-                newBucketCount)];
-            newBuckets[SymTable_hash(curr->uKey, newBucketCount)]= curr;
-            curr = next;
-        }
-    }
-    /* Free the old buckets array and update the symbol table. */
-    free(oSymTable->buckets);
-    oSymTable->buckets = newBuckets;
-    oSymTable->bucket_ct_i++;
-    /* Return 1 if successful. */
-    return 1;
-}
-
 
 /* SymTable_replace: If a binding with the specified key exists, 
 replaces its value and returns the old value. Otherwise, returns NULL. 
