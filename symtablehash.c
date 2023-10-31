@@ -167,7 +167,7 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
 /* SymTable_resize: Resizes the symbol table to the next bucket count*/
 int SymTable_resize(SymTable_T oSymTable) {
     size_t i;
-    Binding_T current, next;
+    Binding_T curr, next;
     Binding_T *newBuckets;
     size_t newBucketCount;
     /* Check for NULL symbol table. */
@@ -189,15 +189,15 @@ int SymTable_resize(SymTable_T oSymTable) {
     }
     /* Rehash the bindings in the symbol table. */
     for (i = 0; i < auBucketCounts[oSymTable->bucket_ct_i]; ++i) {
-        current = oSymTable->buckets[i];
+        curr = oSymTable->buckets[i];
         /* Rehash the bindings in the current bucket. */
-        while (current != NULL) {
-            next = current->next;
+        while (curr != NULL) {
+            next = curr->next;
             /* Add the binding to the new buckets array. */
-            current->next = newBuckets[SymTable_hash(current->uKey, 
+            curr->next = newBuckets[SymTable_hash(curr->uKey, 
                 newBucketCount)];
-            newBuckets[SymTable_hash(current->uKey, newBucketCount)] = current;
-            current = next;
+            newBuckets[SymTable_hash(curr->uKey, newBucketCount)]= curr;
+            curr = next;
         }
     }
     /* Free the old buckets array and update the symbol table. */
