@@ -1,9 +1,11 @@
-/*symtablelist implements a Symbol Table ADT using a hash table, with
+/*symtablehash implements a Symbol Table ADT using a hash table, with
 functions to create an empty symbol table, free a symbol table, get the 
 length of a symbol table, put a key-value pair into the symbol table, 
 replace the value of a key-value with another value, 
 check if a symbol table contains a key, gets the value from a key-value, 
 removes a key-value, and applies a function to all key-value Bindings*/
+/*Author: Matthew Zhang*/
+
 #include "symtable.h"
 #include <assert.h>
 #include <stdlib.h>
@@ -69,8 +71,8 @@ reached the max bucket count or is full or fails to allocate memory*/
 static int SymTable_resize(SymTable_T oSymTable) {
     size_t i;
     Binding_T curr, next;
-    Binding_T *newBuckets;
-    size_t newBucketCount;
+    Binding_T *new_buckets;
+    size_t new_bucket_ct;
     /* Check for NULL symbol table. */
     assert(oSymTable != NULL);
     /* Check if the symbol table is full. */
@@ -82,10 +84,10 @@ static int SymTable_resize(SymTable_T oSymTable) {
         return 0;
     }
     /* Allocate memory for the new buckets array. */
-    newBucketCount = auBucketCounts[oSymTable->bucket_ct_i + 1];
-    newBuckets = (Binding_T *)calloc(newBucketCount, sizeof(Binding_T));
+    new_bucket_ct = auBucketCounts[oSymTable->bucket_ct_i + 1];
+    new_buckets = (Binding_T *)calloc(new_bucket_ct, sizeof(Binding_T));
     /* Check for memory allocation failure. */
-    if (newBuckets == NULL) {
+    if (new_buckets == NULL) {
         return 0;
     }
     /* Rehash the bindings in the symbol table. */
@@ -95,15 +97,16 @@ static int SymTable_resize(SymTable_T oSymTable) {
         while (curr != NULL) {
             next = curr->next;
             /* Add the binding to the new buckets array. */
-            curr->next = newBuckets[SymTable_hash(curr->uKey, 
-                newBucketCount)];
-            newBuckets[SymTable_hash(curr->uKey, newBucketCount)]= curr;
+            curr->next = new_buckets[SymTable_hash(curr->uKey, 
+                new_bucket_ct)];
+            /* Update the new bucket pointer. */
+            new_buckets[SymTable_hash(curr->uKey, new_bucket_ct)]= curr;
             curr = next;
         }
     }
     /* Free the old buckets array and update the symbol table. */
     free(oSymTable->buckets);
-    oSymTable->buckets = newBuckets;
+    oSymTable->buckets = new_buckets;
     oSymTable->bucket_ct_i++;
     /* Return 1 if successful. */
     return 1;
@@ -360,7 +363,7 @@ void SymTable_map(SymTable_T oSymTable, void (*pfApply)(const char
         /* Apply the function to each binding in the current bucket. */
         while (current != NULL) {
             /* Apply the function to the current binding. */
-            pfApply(current->uKey, current->uValue, (void *)pvExtra);
+            (*pfApply)(current->uKey, current->uValue, (void *)pvExtra);
             current = current->next;
         }
     }

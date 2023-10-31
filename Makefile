@@ -1,5 +1,6 @@
-CC = gcc
-CFLAGS = -Wall -Wextra -ansi -pedantic -g
+CC = gcc217
+#CFLAGS = -Wall -Wextra -Wno-unused-parameter -ansi -pedantic -g
+CFLAGS = 
 
 all: testsymtablelist testsymtablehash
 

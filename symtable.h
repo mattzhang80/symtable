@@ -5,6 +5,8 @@ table, get the length of a symbol table, put a key-value binding into
 the symbol table, replace the value of a key-value with another value, 
 check if a symbol table contains a key, gets the value from a key-value, 
 removes a key-value, and applies a function to all key-value Bindings*/
+/*Author: Matthew Zhang*/
+
 #ifndef SYMTABLE_H
 #define SYMTABLE_H
 #include <assert.h>
