@@ -211,9 +211,7 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey, const void *pvValue) {
     oSymTable->length++;
     /* If the symbol table is full, resize it. */
     if (oSymTable->length == auBucketCounts[oSymTable->bucket_ct_i]) {
-        printf(auBucketCounts[oSymTable->bucket_ct_i]);
         SymTable_resize(oSymTable);
-        printf(auBucketCounts[oSymTable->bucket_ct_i]);
     }
     /* Return 1 if successful. */
     return 1;
