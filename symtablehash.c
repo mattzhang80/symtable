@@ -229,12 +229,12 @@ void *SymTable_replace(SymTable_T oSymTable, const char *pcKey, const void *pvVa
     if (oSymTable == NULL) {
         return NULL;
     }
-    /* Check if key exists. */
+    /* Hash the key. */
     hashIndex = SymTable_hash(pcKey, auBucketCounts[oSymTable->bucket_ct_i]);
     curr = oSymTable->buckets[hashIndex];
     /* Replace the value if the key exists. */
     while (curr != NULL) {
-        /* If the key exists, replace the value and return the old value. */
+        /* If key exists, replace the value and return the old value. */
         if (strcmp(curr->uKey, pcKey) == 0) {
             oldVal = curr->uValue;
             curr->uValue = (void *)pvValue;
@@ -306,8 +306,8 @@ returns the value. Otherwise, returns NULL. The client must pass valid
 symbol table and key pointers. */
 void *SymTable_remove(SymTable_T oSymTable, const char *pcKey) {
     size_t index;
-    Binding_T current, previous;
-    void *value;
+    Binding_T curr, prev;
+    void *val;
     /* Check for NULL symbol table or key. */
     assert(pcKey != NULL);
     if (oSymTable == NULL) {
@@ -315,32 +315,32 @@ void *SymTable_remove(SymTable_T oSymTable, const char *pcKey) {
     }
     /* Check if key exists. */
     index = SymTable_hash(pcKey, auBucketCounts[oSymTable->bucket_ct_i]);
-    current = oSymTable->buckets[index];
-    previous = NULL;
+    curr = oSymTable->buckets[index];
+    prev = NULL;
     /* Remove the binding if the key exists. */
-    while (current != NULL) {
+    while (curr != NULL) {
         /* If the key exists, remove the binding and return the value. */
-        if (strcmp(current->uKey, pcKey) == 0) {
+        if (strcmp(curr->uKey, pcKey) == 0) {
             /* If the binding is the first in the bucket, update the
             bucket pointer. */
-            if (previous == NULL) {
-                oSymTable->buckets[index] = current->next;
+            if (prev == NULL) {
+                oSymTable->buckets[index] = curr->next;
             } 
             /* Otherwise, update the previous binding's next pointer. */
             else {
-                previous->next = current->next;
+                prev->next = curr->next;
             }
             /* Free the key and binding, and return the value. */
-            value = current->uValue;
-            free(current->uKey);
-            free(current);
+            val = curr->uValue;
+            free(curr->uKey);
+            free(curr);
             oSymTable->length--;
             /* Return the value. */
-            return value;
+            return val;
         }
         /* Otherwise, continue to the next binding. */
-        previous = current;
-        current = current->next;
+        prev = curr;
+        curr = curr->next;
     }
     /* Return NULL if the key does not exist. */
     return NULL;
